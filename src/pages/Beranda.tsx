@@ -5,10 +5,10 @@ export default function Beranda() {
     {
       title: "Diagram Database",
       icon: <Database className="w-8 h-8 text-blue-400 group-hover:text-blue-300 transition-colors" />,
-      bg: "from-blue-600/20 to-blue-900/40",
-      border: "border-blue-500/20",
+      bg: "from-cyan-600/20 to-cyan-900/40",
+      border: "border-purple-500/20",
       delay: "animation-delay-100",
-      link: "#"
+      link: "https://dbdiagram.io/e/695b0c0439fa3db27b1378a3/69dc4ead0f7c9ef2c0dc596d"
     },
     {
       title: "Sketsa UI",
@@ -22,7 +22,7 @@ export default function Beranda() {
       title: "Link Swagger",
       icon: <BookOpen className="w-8 h-8 text-emerald-400 group-hover:text-emerald-300 transition-colors" />,
       bg: "from-emerald-600/20 to-emerald-900/40",
-      border: "border-emerald-500/20",
+      border: "border-purple-500/20",
       delay: "animation-delay-300",
       link: "#"
     }

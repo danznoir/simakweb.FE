@@ -175,7 +175,7 @@ function RegisterForm({
               </Field>
 
               <FieldDescription className="text-center">
-                Sudah punya akun?{" "}
+                Sudah punya akun ?{" "}
                 <Link
                   to="/login"
                   className="underline underline-offset-4 hover:text-primary"

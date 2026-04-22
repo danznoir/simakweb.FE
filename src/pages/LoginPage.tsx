@@ -11,7 +11,23 @@ import {
   FieldError,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-import { AuthAPI } from "@/services/api"
+
+// ── DUMMY CREDENTIALS ──────────────────────────────────────────────────────────
+const DUMMY_USERS = [
+  {
+    email: "admin@pesantren.com",
+    password: "admin123",
+    token: "dummy-token-admin-001",
+    user: { id: 1, name: "Admin Pesantren", role: "admin", email: "admin@pesantren.com" },
+  },
+  {
+    email: "ustadz@pesantren.com",
+    password: "ustadz123",
+    token: "dummy-token-ustadz-002",
+    user: { id: 2, name: "Ustadz Budi", role: "mentor", email: "ustadz@pesantren.com" },
+  },
+]
+// ──────────────────────────────────────────────────────────────────────────────
 
 export default function LoginPage() {
   const navigate = useNavigate()
@@ -24,19 +40,23 @@ export default function LoginPage() {
     e.preventDefault()
     setError("")
     setLoading(true)
-    try {
-      const res = await AuthAPI.login({ email, password })
-      if (res?.token) {
-        localStorage.setItem("token", res.token)
-        localStorage.setItem("user", JSON.stringify(res.user ?? {}))
-      }
+
+    // Simulasi network delay
+    await new Promise((r) => setTimeout(r, 800))
+
+    const matched = DUMMY_USERS.find(
+      (u) => u.email === email && u.password === password
+    )
+
+    if (matched) {
+      localStorage.setItem("token", matched.token)
+      localStorage.setItem("user", JSON.stringify(matched.user))
       navigate("/dashboard", { replace: true })
-    } catch (err: unknown) {
-      const apiError = err as { message?: string }
-      setError(apiError?.message ?? "Login gagal. Periksa email dan password Anda.")
-    } finally {
-      setLoading(false)
+    } else {
+      setError("Email atau password salah. Gunakan kredensial dummy yang tersedia.")
     }
+
+    setLoading(false)
   }
 
   return (
@@ -128,6 +148,13 @@ function LoginForm({
                   disabled={loading}
                 />
               </Field>
+
+              {/* Dummy credentials hint */}
+              <div className="rounded-md border border-dashed border-amber-400/60 bg-amber-50/60 dark:bg-amber-900/10 px-4 py-3 text-xs text-amber-700 dark:text-amber-400 space-y-1">
+                <p className="font-semibold">🔑 Dummy Credentials (dev only)</p>
+                <p><span className="font-medium">Admin:</span> admin@pesantren.com / admin123</p>
+                <p><span className="font-medium">Ustadz:</span> ustadz@pesantren.com / ustadz123</p>
+              </div>
 
               <Field>
                 <Button type="submit" className="w-full" disabled={loading}>

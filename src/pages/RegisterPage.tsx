@@ -37,8 +37,9 @@ export default function RegisterPage() {
 
     setLoading(true)
     try {
-      await AuthAPI.register({ name, email, password })
-      navigate("/login", { replace: true, state: { registered: true } })
+      await new Promise((r) => setTimeout(r, 1000))
+
+      navigate("/otp", { replace: true, state: { email, fromRegister: true } })
     } catch (err: unknown) {
       const apiError = err as { message?: string }
       setError(apiError?.message ?? "Registrasi gagal. Silakan coba lagi.")
@@ -167,6 +168,12 @@ function RegisterForm({
                   disabled={loading}
                 />
               </Field>
+
+              <div className="rounded-md border border-dashed border-amber-400/60 bg-amber-50/60 dark:bg-amber-900/10 px-4 py-3 text-xs text-amber-700 dark:text-amber-400 space-y-1">
+                <p className="font-semibold">Mode Dummy</p>
+                <p>Isi form dengan data apapun, lalu klik <span className="font-medium">Daftar</span>.</p>
+                <p>Di halaman OTP berikutnya, gunakan kode: <span className="font-mono font-bold">123456</span></p>
+              </div>
 
               <Field>
                 <Button type="submit" className="w-full" disabled={loading}>

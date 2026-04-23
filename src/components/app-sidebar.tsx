@@ -96,13 +96,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   }
 
   return (
-    <Sidebar {...props}>
+    <Sidebar collapsible="icon" {...props}>
       <SidebarHeader className="border-b border-sidebar-border pb-4">
-        <div className="flex items-center gap-3 px-2 py-1">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-md">
+        <div className="flex items-center gap-3 px-2 py-1 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-md">
             <GraduationCap className="h-5 w-5" />
           </div>
-          <div className="flex flex-col">
+          <div className="flex flex-col group-data-[collapsible=icon]:hidden">
             <span className="text-sm font-bold leading-tight tracking-tight">
               Manajer Santri
             </span>
@@ -161,16 +161,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             {/* DropdownMenu Base UI TIDAK punya asChild di Trigger-nya */}
             <DropdownMenu>
               <DropdownMenuTrigger
-                className="flex w-full cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                className="flex w-full cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-ring group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0"
               >
-                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
+                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
                   A
                 </div>
-                <div className="flex flex-col items-start text-left">
+                <div className="flex flex-col items-start text-left group-data-[collapsible=icon]:hidden">
                   <span className="text-sm font-medium leading-none">Admin</span>
                   <span className="text-xs text-muted-foreground">admin@manajer.id</span>
                 </div>
-                <ChevronRight className="ml-auto h-4 w-4 opacity-50" />
+                <ChevronRight className="ml-auto h-4 w-4 opacity-50 group-data-[collapsible=icon]:hidden" />
               </DropdownMenuTrigger>
               <DropdownMenuContent side="top" className="w-52" align="start">
                 <DropdownMenuItem

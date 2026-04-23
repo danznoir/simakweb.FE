@@ -171,7 +171,7 @@ export default function DashboardPage() {
         </div>
         <p className="text-sm text-muted-foreground">
           Selamat datang kembali,{" "}
-          <span className="font-medium text-foreground">Admin</span> 👋 — berikut
+          <span className="font-medium text-foreground">Admin</span> — berikut
           ringkasan data hari ini.
         </p>
       </div>

@@ -12,7 +12,6 @@ import {
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 
-// ── DUMMY CREDENTIALS ──────────────────────────────────────────────────────────
 const DUMMY_USERS = [
   {
     email: "admin@pesantren.com",
@@ -27,7 +26,6 @@ const DUMMY_USERS = [
     user: { id: 2, name: "Ustadz Budi", role: "mentor", email: "ustadz@pesantren.com" },
   },
 ]
-// ──────────────────────────────────────────────────────────────────────────────
 
 export default function LoginPage() {
   const navigate = useNavigate()
@@ -41,7 +39,6 @@ export default function LoginPage() {
     setError("")
     setLoading(true)
 
-    // Simulasi network delay
     await new Promise((r) => setTimeout(r, 800))
 
     const matched = DUMMY_USERS.find(
@@ -149,9 +146,8 @@ function LoginForm({
                 />
               </Field>
 
-              {/* Dummy credentials hint */}
               <div className="rounded-md border border-dashed border-amber-400/60 bg-amber-50/60 dark:bg-amber-900/10 px-4 py-3 text-xs text-amber-700 dark:text-amber-400 space-y-1">
-                <p className="font-semibold">🔑 Dummy Credentials (dev only)</p>
+                <p className="font-semibold">Dummy Credentials (dev only)</p>
                 <p><span className="font-medium">Admin:</span> admin@pesantren.com / admin123</p>
                 <p><span className="font-medium">Ustadz:</span> ustadz@pesantren.com / ustadz123</p>
               </div>

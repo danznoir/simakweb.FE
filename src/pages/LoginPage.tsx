@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { useNavigate, Link } from "react-router-dom"
+import { useNavigate, useLocation, Link } from "react-router-dom"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -11,6 +11,7 @@ import {
   FieldError,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import { AuthCarousel } from "@/components/AuthCarousel"
 
 const DUMMY_USERS = [
   {
@@ -29,6 +30,8 @@ const DUMMY_USERS = [
 
 export default function LoginPage() {
   const navigate = useNavigate()
+  const location = useLocation()
+  const from = (location.state as { from?: string })?.from ?? "/dashboard"
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
@@ -48,7 +51,7 @@ export default function LoginPage() {
     if (matched) {
       localStorage.setItem("token", matched.token)
       localStorage.setItem("user", JSON.stringify(matched.user))
-      navigate("/dashboard", { replace: true })
+      navigate(from, { replace: true })
     } else {
       setError("Email atau password salah. Gunakan kredensial dummy yang tersedia.")
     }
@@ -170,35 +173,7 @@ function LoginForm({
             </FieldGroup>
           </form>
 
-          <div className="relative hidden bg-gradient-to-br from-slate-800 to-slate-950 md:flex md:flex-col md:items-center md:justify-center md:p-10">
-            <div className="absolute inset-0 overflow-hidden">
-              <div className="absolute top-[-20%] left-[-20%] h-[60%] w-[60%] rounded-full bg-blue-600/20 blur-[80px]" />
-              <div className="absolute bottom-[-20%] right-[-20%] h-[60%] w-[60%] rounded-full bg-purple-600/20 blur-[80px]" />
-            </div>
-            <div className="relative z-10 flex flex-col items-center gap-4 text-center">
-              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20">
-                <svg
-                  className="h-8 w-8 text-white"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1.5}
-                    d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25"
-                  />
-                </svg>
-              </div>
-              <h2 className="text-2xl font-semibold text-white">
-                Sistem Manajemen Pesantren
-              </h2>
-              <p className="max-w-xs text-sm text-slate-400">
-                Platform terpadu untuk manajemen santri, kelas, absensi, dan tugas secara digital.
-              </p>
-            </div>
-          </div>
+          <AuthCarousel />
         </CardContent>
       </Card>
 

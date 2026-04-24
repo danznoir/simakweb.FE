@@ -1,5 +1,5 @@
 import * as React from "react"
-import { Link, useLocation } from "react-router-dom"
+import { Link, useLocation, useNavigate } from "react-router-dom"
 import {
   LayoutDashboard,
   Users,
@@ -11,6 +11,7 @@ import {
   Settings,
   LogOut,
   ChevronRight,
+  UserCircle,
 } from "lucide-react"
 
 import {
@@ -89,10 +90,33 @@ const navMain = [
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const location = useLocation()
+  const navigate = useNavigate()
+
+  const [storedUser, setStoredUser] = React.useState(() => {
+    try { return JSON.parse(localStorage.getItem("user") ?? "{}") } catch { return {} }
+  })
+  const [photoUrl, setPhotoUrl] = React.useState<string | null>(
+    localStorage.getItem("profile_photo")
+  )
+
+  React.useEffect(() => {
+    try { setStoredUser(JSON.parse(localStorage.getItem("user") ?? "{}")) } catch {}
+    setPhotoUrl(localStorage.getItem("profile_photo"))
+  }, [location.pathname])
+
+  const displayName: string = storedUser.name ?? "Admin"
+  const displayEmail: string = storedUser.email ?? "admin@manajer.id"
+  const initials = displayName
+    .split(" ")
+    .map((w: string) => w[0])
+    .slice(0, 2)
+    .join("")
+    .toUpperCase()
 
   const handleLogout = () => {
     localStorage.removeItem("token")
-    window.location.href = "/login"
+    localStorage.removeItem("user")
+    navigate("/login", { replace: true })
   }
 
   return (
@@ -113,7 +137,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </div>
       </SidebarHeader>
 
-      {/* Navigation */}
       <SidebarContent>
         {navMain.map((group) => (
           <SidebarGroup key={group.title}>
@@ -124,7 +147,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   const isActive = location.pathname === item.url
                   return (
                     <SidebarMenuItem key={item.title}>
-                      {/* Base UI pakai `render` prop, bukan `asChild` */}
                       <SidebarMenuButton
                         isActive={isActive}
                         tooltip={item.title}
@@ -142,12 +164,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         ))}
       </SidebarContent>
 
-      {/* Footer */}
       <SidebarSeparator />
       <SidebarFooter className="pb-4">
         <SidebarMenu>
           <SidebarMenuItem>
-            {/* Pengaturan — juga pakai `render` prop */}
             <SidebarMenuButton
               tooltip="Pengaturan"
               render={<Link to="/dashboard/settings" />}
@@ -158,21 +178,30 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarMenuItem>
 
           <SidebarMenuItem>
-            {/* DropdownMenu Base UI TIDAK punya asChild di Trigger-nya */}
             <DropdownMenu>
               <DropdownMenuTrigger
                 className="flex w-full cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-ring group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0"
               >
-                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
-                  A
+                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full overflow-hidden bg-primary text-[10px] font-bold text-primary-foreground">
+                  {photoUrl
+                    ? <img src={photoUrl} alt="avatar" className="h-full w-full object-cover" />
+                    : initials
+                  }
                 </div>
                 <div className="flex flex-col items-start text-left group-data-[collapsible=icon]:hidden">
-                  <span className="text-sm font-medium leading-none">Admin</span>
-                  <span className="text-xs text-muted-foreground">admin@manajer.id</span>
+                  <span className="text-sm font-medium leading-none">{displayName}</span>
+                  <span className="text-xs text-muted-foreground">{displayEmail}</span>
                 </div>
                 <ChevronRight className="ml-auto h-4 w-4 opacity-50 group-data-[collapsible=icon]:hidden" />
               </DropdownMenuTrigger>
               <DropdownMenuContent side="top" className="w-52" align="start">
+                <DropdownMenuItem
+                  onClick={() => navigate("/dashboard/profile")}
+                  className="cursor-pointer"
+                >
+                  <UserCircle className="mr-2 h-4 w-4" />
+                  Profil Saya
+                </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={handleLogout}
                   className="cursor-pointer text-red-500 focus:text-red-500"

@@ -11,7 +11,8 @@ import {
   FieldError,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-import { AuthAPI } from "@/services/api"
+import { AuthCarousel } from "@/components/AuthCarousel"
+
 
 export default function RegisterPage() {
   const navigate = useNavigate()
@@ -193,45 +194,7 @@ function RegisterForm({
             </FieldGroup>
           </form>
 
-          <div className="relative hidden bg-gradient-to-br from-slate-800 to-slate-950 md:flex md:flex-col md:items-center md:justify-center md:p-10">
-            <div className="absolute inset-0 overflow-hidden">
-              <div className="absolute top-[-20%] left-[-20%] h-[60%] w-[60%] rounded-full bg-emerald-600/20 blur-[80px]" />
-              <div className="absolute bottom-[-20%] right-[-20%] h-[60%] w-[60%] rounded-full bg-blue-600/20 blur-[80px]" />
-            </div>
-            <div className="relative z-10 flex flex-col items-center gap-4 text-center">
-              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20">
-                <svg
-                  className="h-8 w-8 text-white"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1.5}
-                    d="M18 7.5v3m0 0v3m0-3h3m-3 0h-3M13.5 19.5l-2.25-2.25M13.5 19.5l2.25-2.25m-2.25 2.25V12m0 7.5a9 9 0 1 1 0-18 9 9 0 0 1 0 18Z"
-                  />
-                </svg>
-              </div>
-              <h2 className="text-2xl font-semibold text-white">
-                Bergabung Sekarang
-              </h2>
-              <p className="max-w-xs text-sm text-slate-400">
-                Daftarkan diri Anda dan mulai kelola kegiatan pesantren dengan mudah dan efisien.
-              </p>
-              <ul className="mt-2 flex flex-col gap-2 text-left">
-                {["Manajemen Santri", "Absensi Digital", "Tugas & Penilaian", "Laporan Real-time"].map((item) => (
-                  <li key={item} className="flex items-center gap-2 text-sm text-slate-300">
-                    <svg className="h-4 w-4 text-emerald-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
+          <AuthCarousel />
         </CardContent>
       </Card>
 

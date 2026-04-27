@@ -1,4 +1,5 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
+import { Toaster } from 'sonner'
 import Beranda from './pages/Beranda'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
@@ -7,9 +8,13 @@ import DashboardLayout from './pages/DashboardLayout'
 import DashboardPage from './pages/DashboardPage'
 import ProfilePage from './pages/ProfilePage'
 import ProtectedRoute from './components/ProtectedRoute'
+import TugasPage from './pages/TugasPage'
+import PelajaranPage from './pages/PelajaranPage'
 
 function App() {
   return (
+    <>
+    <Toaster position="top-right" richColors closeButton />
     <Routes>
       <Route path="/" element={<Navigate to="/login" replace />} />
       <Route path="/login" element={<LoginPage />} />
@@ -24,13 +29,14 @@ function App() {
           <Route path="divisi" element={<DashboardPage />} />
           <Route path="kelas" element={<DashboardPage />} />
           <Route path="absensi" element={<DashboardPage />} />
-          <Route path="tugas" element={<DashboardPage />} />
-          <Route path="pelajaran" element={<DashboardPage />} />
+          <Route path="tugas" element={<TugasPage />} />
+          <Route path="pelajaran" element={<PelajaranPage />} />
           <Route path="settings" element={<DashboardPage />} />
           <Route path="profile" element={<ProfilePage />} />
         </Route>
       </Route>
     </Routes>
+    </>
   )
 }
 

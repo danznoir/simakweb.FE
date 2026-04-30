@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from "react"
 import { useNavigate, useLocation, Link } from "react-router-dom"
+import { AuthAPI } from "@/services/api"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -9,21 +10,13 @@ import { ShieldCheck, RotateCcw, ArrowLeft, CheckCircle2 } from "lucide-react"
 const OTP_LENGTH = 6
 const RESEND_COOLDOWN = 60 
 
-async function verifyOtp(_email: string, otp: string): Promise<boolean> {
-  await new Promise((r) => setTimeout(r, 900))
-  return otp === "123456" 
-}
-
-async function resendOtp(_email: string): Promise<void> {
-  await new Promise((r) => setTimeout(r, 600))
-}
-
 export default function OtpPage() {
   const navigate = useNavigate()
   const location = useLocation()
 
-  const state = location.state as { email?: string; fromRegister?: boolean } | null
+  const state = location.state as { email?: string; userId?: string; fromRegister?: boolean } | null
   const email: string = state?.email ?? "****@****.***"
+  const userId: string = state?.userId ?? ""
   const fromRegister: boolean = state?.fromRegister ?? false
 
   const [digits, setDigits] = useState<string[]>(Array(OTP_LENGTH).fill(""))
@@ -95,11 +88,15 @@ export default function OtpPage() {
       setError("Masukkan semua 6 digit kode OTP.")
       return
     }
+    if (!userId) {
+      setError("Data sesi tidak valid. Silakan daftar ulang.")
+      return
+    }
     setLoading(true)
     setError("")
-    const ok = await verifyOtp(email, otp)
-    setLoading(false)
-    if (ok) {
+    
+    try {
+      await AuthAPI.verifyOtp({ userId, otp })
       setSuccess(true)
       setTimeout(() => {
         if (fromRegister) {
@@ -108,12 +105,15 @@ export default function OtpPage() {
           navigate("/dashboard", { replace: true })
         }
       }, 1800)
-    } else {
-      setError("Kode OTP salah atau sudah kedaluwarsa. Silakan coba lagi.")
+    } catch (err: unknown) {
+      const apiError = err as { message?: string }
+      setError(apiError?.message ?? "Kode OTP salah atau sudah kedaluwarsa. Silakan coba lagi.")
       setDigits(Array(OTP_LENGTH).fill(""))
       focusInput(0)
+    } finally {
+      setLoading(false)
     }
-  }, [digits, email, fromRegister, navigate])
+  }, [digits, email, userId, fromRegister, navigate])
 
   useEffect(() => {
     if (digits.every((d) => d !== "") && !loading && !success) {
@@ -123,17 +123,28 @@ export default function OtpPage() {
 
   const handleResend = async () => {
     if (!canResend || resendLoading) return
+    if (!userId || !email) {
+      setError("Data sesi tidak valid. Silakan daftar ulang.")
+      return
+    }
     setResendLoading(true)
     setResendSuccess(false)
     setError("")
-    await resendOtp(email)
-    setResendLoading(false)
-    setResendSuccess(true)
-    setCanResend(false)
-    setCountdown(RESEND_COOLDOWN)
-    setDigits(Array(OTP_LENGTH).fill(""))
-    focusInput(0)
-    setTimeout(() => setResendSuccess(false), 3000)
+    
+    try {
+      await AuthAPI.resendOtp({ email, userId })
+      setResendSuccess(true)
+      setCanResend(false)
+      setCountdown(RESEND_COOLDOWN)
+      setDigits(Array(OTP_LENGTH).fill(""))
+      focusInput(0)
+      setTimeout(() => setResendSuccess(false), 3000)
+    } catch (err: unknown) {
+      const apiError = err as { message?: string }
+      setError(apiError?.message ?? "Gagal mengirim ulang OTP.")
+    } finally {
+      setResendLoading(false)
+    }
   }
 
   const isComplete = digits.every((d) => d !== "")
@@ -232,9 +243,7 @@ export default function OtpPage() {
                         </p>
                       )}
 
-                      <div className="rounded-md border border-dashed border-amber-400/60 bg-amber-50/60 dark:bg-amber-900/10 px-4 py-2.5 text-xs text-amber-700 dark:text-amber-400 text-center">
-                      <span className="font-semibold">OTP dummy:</span> 123456
-                      </div>
+
 
                       <Button
                         type="submit"

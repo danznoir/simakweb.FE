@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { useNavigate, useLocation, Link } from "react-router-dom"
+import { AuthAPI } from "@/services/api"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -12,21 +13,6 @@ import {
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { AuthCarousel } from "@/components/AuthCarousel"
-
-const DUMMY_USERS = [
-  {
-    email: "admin@pesantren.com",
-    password: "admin123",
-    token: "dummy-token-admin-001",
-    user: { id: 1, name: "Admin Pesantren", role: "admin", email: "admin@pesantren.com" },
-  },
-  {
-    email: "ustadz@pesantren.com",
-    password: "ustadz123",
-    token: "dummy-token-ustadz-002",
-    user: { id: 2, name: "Ustadz Budi", role: "mentor", email: "ustadz@pesantren.com" },
-  },
-]
 
 export default function LoginPage() {
   const navigate = useNavigate()
@@ -42,21 +28,21 @@ export default function LoginPage() {
     setError("")
     setLoading(true)
 
-    await new Promise((r) => setTimeout(r, 800))
+    try {
+      const response = await AuthAPI.login({ email, password })
+      const { user, token, refreshToken } = response.data
 
-    const matched = DUMMY_USERS.find(
-      (u) => u.email === email && u.password === password
-    )
-
-    if (matched) {
-      localStorage.setItem("token", matched.token)
-      localStorage.setItem("user", JSON.stringify(matched.user))
+      localStorage.setItem("token", token)
+      localStorage.setItem("refreshToken", refreshToken)
+      localStorage.setItem("user", JSON.stringify(user))
+      
       navigate(from, { replace: true })
-    } else {
-      setError("Email atau password salah. Gunakan kredensial dummy yang tersedia.")
+    } catch (err: unknown) {
+      const apiError = err as { message?: string }
+      setError(apiError?.message ?? "Email atau password salah.")
+    } finally {
+      setLoading(false)
     }
-
-    setLoading(false)
   }
 
   return (
@@ -149,11 +135,7 @@ function LoginForm({
                 />
               </Field>
 
-              <div className="rounded-md border border-dashed border-amber-400/60 bg-amber-50/60 dark:bg-amber-900/10 px-4 py-3 text-xs text-amber-700 dark:text-amber-400 space-y-1">
-                <p className="font-semibold">Dummy Credentials (dev only)</p>
-                <p><span className="font-medium">Admin:</span> admin@pesantren.com / admin123</p>
-                <p><span className="font-medium">Ustadz:</span> ustadz@pesantren.com / ustadz123</p>
-              </div>
+
 
               <Field>
                 <Button type="submit" className="w-full" disabled={loading}>

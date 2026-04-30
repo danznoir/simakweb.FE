@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { useNavigate, Link } from "react-router-dom"
+import { AuthAPI } from "@/services/api"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -18,6 +19,8 @@ export default function RegisterPage() {
   const navigate = useNavigate()
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
+  const [phone, setPhone] = useState("")
+  const [role, setRole] = useState("SANTRI")
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
   const [error, setError] = useState("")
@@ -38,9 +41,15 @@ export default function RegisterPage() {
 
     setLoading(true)
     try {
-      await new Promise((r) => setTimeout(r, 1000))
+      const response = await AuthAPI.register({
+        fullName: name,
+        email,
+        phone,
+        password,
+        role
+      })
 
-      navigate("/otp", { replace: true, state: { email, fromRegister: true } })
+      navigate("/otp", { replace: true, state: { email, userId: response?.data?.id, fromRegister: true } })
     } catch (err: unknown) {
       const apiError = err as { message?: string }
       setError(apiError?.message ?? "Registrasi gagal. Silakan coba lagi.")
@@ -55,12 +64,16 @@ export default function RegisterPage() {
         <RegisterForm
           name={name}
           email={email}
+          phone={phone}
+          role={role}
           password={password}
           confirmPassword={confirmPassword}
           error={error}
           loading={loading}
           onNameChange={setName}
           onEmailChange={setEmail}
+          onPhoneChange={setPhone}
+          onRoleChange={setRole}
           onPasswordChange={setPassword}
           onConfirmPasswordChange={setConfirmPassword}
           onSubmit={handleSubmit}
@@ -73,12 +86,16 @@ export default function RegisterPage() {
 interface RegisterFormProps extends React.ComponentProps<"div"> {
   name: string
   email: string
+  phone: string
+  role: string
   password: string
   confirmPassword: string
   error: string
   loading: boolean
   onNameChange: (val: string) => void
   onEmailChange: (val: string) => void
+  onPhoneChange: (val: string) => void
+  onRoleChange: (val: string) => void
   onPasswordChange: (val: string) => void
   onConfirmPasswordChange: (val: string) => void
   onSubmit: (e: React.FormEvent) => void
@@ -88,12 +105,16 @@ function RegisterForm({
   className,
   name,
   email,
+  phone,
+  role,
   password,
   confirmPassword,
   error,
   loading,
   onNameChange,
   onEmailChange,
+  onPhoneChange,
+  onRoleChange,
   onPasswordChange,
   onConfirmPasswordChange,
   onSubmit,
@@ -145,6 +166,43 @@ function RegisterForm({
               </Field>
 
               <Field>
+                <FieldLabel htmlFor="phone">Nomor Telepon</FieldLabel>
+                <Input
+                  id="phone"
+                  type="text"
+                  placeholder="Minimal 10 karakter"
+                  required
+                  value={phone}
+                  onChange={(e) => onPhoneChange(e.target.value)}
+                  disabled={loading}
+                />
+              </Field>
+
+              <Field>
+                <FieldLabel htmlFor="role">Peran</FieldLabel>
+                <div className="grid grid-cols-2 gap-4">
+                  <Button
+                    type="button"
+                    variant={role === "SANTRI" ? "default" : "outline"}
+                    onClick={() => onRoleChange("SANTRI")}
+                    disabled={loading}
+                    className="w-full"
+                  >
+                    Santri
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={role === "WALI_SANTRI" ? "default" : "outline"}
+                    onClick={() => onRoleChange("WALI_SANTRI")}
+                    disabled={loading}
+                    className="w-full"
+                  >
+                    Wali Santri
+                  </Button>
+                </div>
+              </Field>
+
+              <Field>
                 <FieldLabel htmlFor="password">Password</FieldLabel>
                 <Input
                   id="password"
@@ -169,12 +227,6 @@ function RegisterForm({
                   disabled={loading}
                 />
               </Field>
-
-              <div className="rounded-md border border-dashed border-amber-400/60 bg-amber-50/60 dark:bg-amber-900/10 px-4 py-3 text-xs text-amber-700 dark:text-amber-400 space-y-1">
-                <p className="font-semibold">Mode Dummy</p>
-                <p>Isi form dengan data apapun, lalu klik <span className="font-medium">Daftar</span>.</p>
-                <p>Di halaman OTP berikutnya, gunakan kode: <span className="font-mono font-bold">123456</span></p>
-              </div>
 
               <Field>
                 <Button type="submit" className="w-full" disabled={loading}>

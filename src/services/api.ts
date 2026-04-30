@@ -37,6 +37,8 @@ const fetchWrapper = async (endpoint: string, options: RequestInit = {}) => {
 export const AuthAPI = {
   login: (data: any) => fetchWrapper('/auth/login', { method: 'POST', body: JSON.stringify(data) }),
   register: (data: any) => fetchWrapper('/auth/register', { method: 'POST', body: JSON.stringify(data) }),
+  verifyOtp: (data: any) => fetchWrapper('/auth/verify-otp', { method: 'POST', body: JSON.stringify(data) }),
+  resendOtp: (data: any) => fetchWrapper('/auth/send-otp', { method: 'POST', body: JSON.stringify(data) }),
   getUsers: () => fetchWrapper('/users'),
 };
 

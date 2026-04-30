@@ -11,6 +11,22 @@ import ProtectedRoute from './components/ProtectedRoute'
 import TugasPage from './pages/TugasPage'
 import PelajaranPage from './pages/PelajaranPage'
 
+// Fase 1 – Core
+import SantriPage from './pages/SantriPage'
+import WaliProfilePage from './pages/WaliProfilePage'
+import DivisiPage from './pages/DivisiPage'
+import KelasPage from './pages/KelasPage'
+
+// Fase 2 – Akademik
+import AbsensiPage from './pages/AbsensiPage'
+import SubmissionPage from './pages/SubmissionPage'
+import JurnalPage from './pages/JurnalPage'
+
+// Fase 3 – Evaluasi
+import NilaiPage from './pages/NilaiPage'
+import WaliPage from './pages/WaliPage'
+import RelasiPage from './pages/RelasiPage'
+
 function App() {
   return (
     <>
@@ -25,12 +41,26 @@ function App() {
       <Route element={<ProtectedRoute />}>
         <Route path="/dashboard" element={<DashboardLayout />}>
           <Route index element={<DashboardPage />} />
-          <Route path="santri" element={<DashboardPage />} />
-          <Route path="divisi" element={<DashboardPage />} />
-          <Route path="kelas" element={<DashboardPage />} />
-          <Route path="absensi" element={<DashboardPage />} />
+
+          {/* Fase 1 – Core */}
+          <Route path="santri" element={<SantriPage />} />
+          <Route path="santri/:santriId/wali-profile" element={<WaliProfilePage />} />
+          <Route path="divisi" element={<DivisiPage />} />
+          <Route path="kelas" element={<KelasPage />} />
+
+          {/* Fase 2 – Akademik */}
+          <Route path="absensi" element={<AbsensiPage />} />
           <Route path="tugas" element={<TugasPage />} />
+          <Route path="submisi" element={<SubmissionPage />} />
+          <Route path="jurnal" element={<JurnalPage />} />
           <Route path="pelajaran" element={<PelajaranPage />} />
+
+          {/* Fase 3 – Evaluasi */}
+          <Route path="nilai" element={<NilaiPage />} />
+          <Route path="wali" element={<WaliPage />} />
+          <Route path="relasi" element={<RelasiPage />} />
+
+          {/* Existing */}
           <Route path="settings" element={<DashboardPage />} />
           <Route path="profile" element={<ProfilePage />} />
         </Route>
